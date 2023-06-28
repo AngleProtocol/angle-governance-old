@@ -1,0 +1,8 @@
+ds-test/=lib/forge-std/lib/ds-test/src/
+forge-std/=lib/forge-std/src/
+contracts/=contracts/
+interfaces/=contracts/interfaces/
+oz/=lib/openzeppelin-contracts/contracts/
+mock/=test/mock/
+lz/=lib/solidity-examples/contracts
+@openzeppelin=lib/openzeppelin-contracts/

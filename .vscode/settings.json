@@ -1,0 +1,15 @@
+{
+  "solidity.formatter": "prettier",
+  "[typescript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  },
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "slither.solcPath": "",
+  "slither.hiddenDetectors": [],
+  "solidity.compileUsingRemoteVersion": "v0.8.19+commit.7dd6d404"
+}

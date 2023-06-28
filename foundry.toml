@@ -1,0 +1,61 @@
+[profile.default]
+src = 'contracts'
+out = 'out'
+test = 'test'
+libs = ['node_modules', 'lib']
+script = 'scripts/foundry'
+cache_path = 'cache-forge'
+gas_reports = ["*"]
+via_ir = true
+sizes = true
+optimizer_runs=1000
+solc_version = '0.8.19'
+ffi = true
+
+[fuzz]
+runs = 10000
+
+[invariant]
+runs = 1000
+depth = 30
+
+[rpc_endpoints]
+arbitrum = "${ETH_NODE_URI_ARBITRUM}"
+mainnet = "${ETH_NODE_URI_MAINNET}"
+optimism = "${ETH_NODE_URI_OPTIMISM}"
+polygon = "${ETH_NODE_URI_POLYGON}"
+fork = "${ETH_NODE_URI_FORK}"
+
+[etherscan]
+arbitrum = { key = "${ARBITRUM_ETHERSCAN_API_KEY}" }
+mainnet = { key = "${MAINNET_ETHERSCAN_API_KEY}" }
+optimism = { key = "${OPTIMISM_ETHERSCAN_API_KEY}" }
+polygon = { key = "${POLYGON_ETHERSCAN_API_KEY}" }
+
+
+[profile.dev]
+optimizer = false
+src = 'test'
+via_ir = false
+gas_reports = ["*"]
+
+[profile.dev.fuzz]
+runs = 2000
+
+[profile.dev.invariant]
+runs = 10
+depth = 1
+fail_on_revert = false
+
+[profile.ci]
+src = 'test'
+via_ir = false
+gas_reports = ["*"]
+
+[profile.ci.fuzz]
+runs = 100
+
+[profile.ci.invariant]
+runs = 10
+depth = 30
+fail_on_revert = false
