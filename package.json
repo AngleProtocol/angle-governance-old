@@ -1,5 +1,5 @@
 {
-  "name": "angle-boilerplate",
+  "name": "angle-governance",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -10,12 +10,11 @@
     "gas": "yarn test --gas-report",
     "deploy:fork": "FOUNDRY_PROFILE=dev forge script --fork-url fork --broadcast",
     "fork": "source .env && anvil --fork-url $ETH_NODE_URI_MAINNET",
-    "fork:arbitrum": "source .env && anvil --fork-url $ETH_NODE_URI_ARBITRUM",
     "run": "docker run -it --rm -v $(pwd):/app -w /app ghcr.io/foundry-rs/foundry sh",
     "run:ci": "FOUNDRY_PROFILE=ci forge test -vvv --gas-report",
     "slither": "chmod +x ./slither.sh && ./slither.sh",
     "test": "FOUNDRY_PROFILE=dev forge test -vvv",
-    "lcov:clean": "lcov --remove lcov.info -o lcov.info 'test/**/**' 'test/**' 'contracts/transmuter/configs/**' 'contracts/utils/**'",
+    "lcov:clean": "lcov --remove lcov.info -o lcov.info 'test/**/**' 'test/**' 'contracts/utils/**'",
     "lcov:generate-html": "genhtml lcov.info --output=coverage",
     "size": "forge build --sizes",
     "lint": "yarn lint:sol",
@@ -24,9 +23,9 @@
   },
   "keywords": [],
   "author": "Angle Core Team",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AngleProtocol/boilerplate/issues"
+    "url": "https://github.com/AngleProtocol/angle-governance/issues"
   },
   "devDependencies": {
     "@angleprotocol/sdk": "3.0.43",

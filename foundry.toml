@@ -36,7 +36,7 @@ polygon = { key = "${POLYGON_ETHERSCAN_API_KEY}" }
 [profile.dev]
 optimizer = false
 src = 'test'
-via_ir = false
+via_ir = true
 gas_reports = ["*"]
 
 [profile.dev.fuzz]
@@ -49,7 +49,7 @@ fail_on_revert = false
 
 [profile.ci]
 src = 'test'
-via_ir = false
+via_ir = true
 gas_reports = ["*"]
 
 [profile.ci.fuzz]

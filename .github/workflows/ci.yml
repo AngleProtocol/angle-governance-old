@@ -100,5 +100,5 @@ jobs:
         uses: Rubilmax/foundry-gas-diff@v3.13.4
         id: gas_diff
         with:
-          match: contracts/transmuter/DiamondProxy.sol
+          match: contracts/AngleGovernor.sol
           report: ethereum.gasreport.ansi
