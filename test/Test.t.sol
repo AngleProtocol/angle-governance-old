@@ -5,6 +5,7 @@ pragma solidity ^0.8.9;
 import { IGovernor } from "oz/governance/IGovernor.sol";
 import { TimelockController } from "oz/governance/TimelockController.sol";
 import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
+import { Strings } from "oz/utils/Strings.sol";
 
 import { console } from "forge-std/Console.sol";
 import { Test, stdError } from "forge-std/Test.sol";
@@ -39,11 +40,27 @@ contract Fixture is Test {
     address public alice = vm.addr(1);
     address public bob = vm.addr(2);
 
-    function getLZChainId(uint256 chainId) internal pure returns (uint16) {
-        if (chainId == 1) return 101;
-        if (chainId == 137) return 109;
-        // TODO COMPLETE
-        return 0;
+    function stringToUint(string memory s) public pure returns (uint) {
+        bytes memory b = bytes(s);
+        uint result = 0;
+        for (uint256 i = 0; i < b.length; i++) {
+            uint256 c = uint256(uint8(b[i]));
+            if (c >= 48 && c <= 57) {
+                result = result * 10 + (c - 48);
+            }
+        }
+        return result;
+    }
+
+    function getLZChainId(uint256 chainId) internal returns (uint16) {
+        string[] memory cmd = new string[](3);
+        cmd[0] = "node";
+        cmd[1] = "utils/getLayerZeroChainIds.js";
+        cmd[2] = vm.toString(chainId);
+
+        bytes memory res = vm.ffi(cmd);
+
+        return uint16(stringToUint(string(res)));
     }
 
     function setUp() public {
@@ -191,13 +208,13 @@ contract Fixture is Test {
         bytes memory payload;
         for (uint256 i; i < entries.length; i++) {
             if (
-                entries[i].topics[0] == keccak256("ExecuteRemoteProposal(uint16,bytes)")
-                // entries[i].topics[1] == bytes32(uint256(137))
+                entries[i].topics[0] == keccak256("ExecuteRemoteProposal(uint16,bytes)") &&
+                entries[i].topics[1] == bytes32(uint256(getLZChainId(137)))
             ) {
                 payload = abi.decode(entries[i].data, (bytes));
                 break;
             }
-        }s
+        }
 
         vm.selectFork(polygonFork);
         hoax(address(polygonLzEndpoint));
