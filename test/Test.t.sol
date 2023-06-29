@@ -389,6 +389,7 @@ contract Fixture is Test {
                         proposalSender.execute.selector,
                         getLZChainId(chainId),
                         abi.encode(batchTargets, batchValues, new string[](1), batchCalldatas),
+                        // TODO: optimize this one depending on the gas no?
                         abi.encodePacked(uint16(1), uint256(300000))
                     );
 

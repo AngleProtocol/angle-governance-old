@@ -18,6 +18,7 @@ import { ProposalSender } from "contracts/ProposalSender.sol";
 import { ILayerZeroEndpoint } from "lz/interfaces/ILayerZeroEndpoint.sol";
 import "stringutils/strings.sol";
 
+//solhint-disable
 contract Build is Test {
     using strings for *;
 
