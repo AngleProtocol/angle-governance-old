@@ -12,6 +12,7 @@ import "lz/interfaces/ILayerZeroEndpoint.sol";
 /// the owner of this contract must be the `Governor` contract itself
 /// @dev Full fork from:
 /// https://github.com/LayerZero-Labs/omnichain-governance-executor/blob/main/contracts/OmnichainProposalSender.sol
+//solhint-disable
 contract ProposalSender is Ownable, ReentrancyGuard {
     uint64 public lastStoredPayloadNonce;
 

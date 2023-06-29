@@ -1,4 +1,4 @@
-name: Transmuter CI
+name: Angle Governance CI
 
 on:
   push:
