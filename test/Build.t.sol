@@ -16,8 +16,124 @@ import { ProposalReceiver } from "contracts/ProposalReceiver.sol";
 import { ProposalSender } from "contracts/ProposalSender.sol";
 
 import { ILayerZeroEndpoint } from "lz/interfaces/ILayerZeroEndpoint.sol";
+import "stringutils/strings.sol";
 
 contract Build is Test {
+    using strings for *;
+
+    uint256[] chainIds; // To list every needed chainId
+
+    mapping(uint256 => uint256) forkIdentifier;
+    mapping(uint256 => TimelockController) internal _timelocks;
+    mapping(uint256 => ProposalReceiver) internal _proposalReceivers;
+    ProposalSender internal _proposalSender;
+    AngleGovernor public _governor;
+    IVotes public veANGLE = IVotes(0x0C462Dbb9EC8cD1630f1728B2CFD2769d09f0dd5);
+
+    function setUp() public {
+        chainIds = new uint256[](2);
+        chainIds[0] = 1;
+        chainIds[1] = 137;
+
+        string memory baseURI = "ETH_NODE_URI_";
+        for (uint256 i; i < chainIds.length; i++) {
+            forkIdentifier[chainIds[i]] = vm.createFork(
+                vm.envString(baseURI.toSlice().concat(vm.toString(chainIds[i]).toSlice()))
+            );
+
+            /// TODO Remove this part after deployment
+            if (chainIds[i] == 1) {
+                vm.selectFork(forkIdentifier[chainIds[i]]);
+                address[] memory proposers = new address[](0);
+                address[] memory executors = new address[](1);
+                executors[0] = address(0); // Means everyone can execute
+
+                _timelocks[chainIds[i]] = new TimelockController(1 days, proposers, executors, address(this));
+                _governor = new AngleGovernor(veANGLE, _timelocks[chainIds[i]]);
+                _timelocks[chainIds[i]].grantRole(_timelocks[chainIds[i]].PROPOSER_ROLE(), address(governor()));
+                _timelocks[chainIds[i]].grantRole(_timelocks[chainIds[i]].CANCELLER_ROLE(), multisig(chainIds[i]));
+                _timelocks[chainIds[i]].renounceRole(_timelocks[chainIds[i]].TIMELOCK_ADMIN_ROLE(), address(this));
+                _proposalSender = new ProposalSender(lzEndPoint(chainIds[i]));
+            } else {
+                vm.selectFork(forkIdentifier[chainIds[i]]);
+                address[] memory proposers = new address[](0);
+                address[] memory executors = new address[](1);
+                executors[0] = address(0); // Means everyone can execute
+
+                _timelocks[chainIds[i]] = new TimelockController(1 days, proposers, executors, address(this));
+                _proposalReceivers[chainIds[i]] = new ProposalReceiver(address(lzEndPoint(chainIds[i])));
+                _timelocks[chainIds[i]].grantRole(
+                    _timelocks[chainIds[i]].PROPOSER_ROLE(),
+                    address(_proposalReceivers[chainIds[i]])
+                );
+                _timelocks[chainIds[i]].grantRole(_timelocks[chainIds[i]].CANCELLER_ROLE(), multisig(chainIds[i]));
+
+                vm.selectFork(forkIdentifier[1]);
+                _proposalSender.setTrustedRemoteAddress(
+                    getLZChainId(chainIds[i]),
+                    abi.encodePacked(_proposalReceivers[chainIds[i]])
+                );
+
+                vm.selectFork(forkIdentifier[chainIds[i]]);
+                _proposalReceivers[chainIds[i]].setTrustedRemoteAddress(
+                    getLZChainId(1),
+                    abi.encodePacked(_proposalSender)
+                );
+                _proposalReceivers[chainIds[i]].transferOwnership(address(_timelocks[chainIds[i]]));
+            }
+        }
+        _proposalSender.transferOwnership(address(_governor));
+    }
+
+    function testSetUp() public {
+        console.log(getLZChainId(137));
+    }
+
+    function test_GenerateTenderlySimulations() public {
+        // console.log(getLZChainId(137));
+    }
+
+    /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                        VIRTUAL                                                     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+    /// TODO Replace with functions fetching the address from the sdk
+    function timelock(uint256 chainId) public returns (TimelockController) {
+        return _timelocks[chainId];
+    }
+
+    function proposalReceiver(uint256 chainId) public returns (ProposalReceiver) {
+        return _proposalReceivers[chainId];
+    }
+
+    function proposalSender() public returns (ProposalSender) {
+        return _proposalSender;
+    }
+
+    function governor() public returns (AngleGovernor) {
+        return _governor;
+    }
+
+    function multisig(uint256 chainId) public returns (address) {
+        string[] memory cmd = new string[](3);
+        cmd[0] = "node";
+        cmd[1] = "utils/multisig.js";
+        cmd[2] = vm.toString(chainId);
+
+        bytes memory res = vm.ffi(cmd);
+        return address(bytes20(res));
+    }
+
+    function lzEndPoint(uint256 chainId) public returns (ILayerZeroEndpoint) {
+        string[] memory cmd = new string[](3);
+        cmd[0] = "node";
+        cmd[1] = "utils/layerZeroEndpoint.js";
+        cmd[2] = vm.toString(chainId);
+
+        bytes memory res = vm.ffi(cmd);
+        return ILayerZeroEndpoint(address(bytes20(res)));
+    }
+
     function stringToUint(string memory s) public pure returns (uint) {
         bytes memory b = bytes(s);
         uint result = 0;
@@ -33,20 +149,11 @@ contract Build is Test {
     function getLZChainId(uint256 chainId) internal returns (uint16) {
         string[] memory cmd = new string[](3);
         cmd[0] = "node";
-        cmd[1] = "utils/getLayerZeroChainIds.js";
+        cmd[1] = "utils/layerZeroChainIds.js";
         cmd[2] = vm.toString(chainId);
 
         bytes memory res = vm.ffi(cmd);
-        console.log(string(res));
         return uint16(stringToUint(string(res)));
-    }
-
-    function setUp() public {
-        console.log(getLZChainId(137));
-    }
-
-    function testSetUp() public {
-        console.log(getLZChainId(137));
     }
 
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////

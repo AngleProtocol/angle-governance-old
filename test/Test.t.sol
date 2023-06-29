@@ -21,7 +21,7 @@ contract Fixture is Test {
     event ExecuteRemoteProposal(uint16 indexed remoteChainId, bytes payload);
 
     uint256 public mainnetFork;
-    string public MAINNET_RPC_URL = vm.envString("ETH_NODE_URI_MAINNET");
+    string public MAINNET_RPC_URL = vm.envString("ETH_NODE_URI_1");
     ILayerZeroEndpoint mainnetLzEndpoint = ILayerZeroEndpoint(0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675);
     AngleGovernor public angleGovernor;
     IVotes public veANGLE = IVotes(0x0C462Dbb9EC8cD1630f1728B2CFD2769d09f0dd5);
@@ -31,7 +31,7 @@ contract Fixture is Test {
     address whale = 0xD13F8C25CceD32cdfA79EB5eD654Ce3e484dCAF5;
 
     uint256 public polygonFork;
-    string public POLYGON_RPC_URL = vm.envString("ETH_NODE_URI_POLYGON");
+    string public POLYGON_RPC_URL = vm.envString("ETH_NODE_URI_137");
     ILayerZeroEndpoint polygonLzEndpoint = ILayerZeroEndpoint(0x3c2269811836af69497E5F486A85D7316753cf62);
     TimelockController public polygonTimelock;
     address public polygonMultisig = 0xdA2D2f638D6fcbE306236583845e5822554c02EA;
