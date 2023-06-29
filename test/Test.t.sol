@@ -5,6 +5,7 @@ pragma solidity ^0.8.9;
 import { IGovernor } from "oz/governance/IGovernor.sol";
 import { TimelockController } from "oz/governance/TimelockController.sol";
 import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
+import { Strings } from "oz/utils/Strings.sol";
 
 import { console } from "forge-std/Console.sol";
 import { Test, stdError } from "forge-std/Test.sol";
@@ -20,7 +21,7 @@ contract Fixture is Test {
     event ExecuteRemoteProposal(uint16 indexed remoteChainId, bytes payload);
 
     uint256 public mainnetFork;
-    string public MAINNET_RPC_URL = vm.envString("ETH_NODE_URI_MAINNET");
+    string public MAINNET_RPC_URL = vm.envString("ETH_NODE_URI_1");
     ILayerZeroEndpoint mainnetLzEndpoint = ILayerZeroEndpoint(0x66A71Dcef29A0fFBDBE3c6a460a3B5BC225Cd675);
     AngleGovernor public angleGovernor;
     IVotes public veANGLE = IVotes(0x0C462Dbb9EC8cD1630f1728B2CFD2769d09f0dd5);
@@ -30,7 +31,7 @@ contract Fixture is Test {
     address whale = 0xD13F8C25CceD32cdfA79EB5eD654Ce3e484dCAF5;
 
     uint256 public polygonFork;
-    string public POLYGON_RPC_URL = vm.envString("ETH_NODE_URI_POLYGON");
+    string public POLYGON_RPC_URL = vm.envString("ETH_NODE_URI_137");
     ILayerZeroEndpoint polygonLzEndpoint = ILayerZeroEndpoint(0x3c2269811836af69497E5F486A85D7316753cf62);
     TimelockController public polygonTimelock;
     address public polygonMultisig = 0xdA2D2f638D6fcbE306236583845e5822554c02EA;
@@ -39,11 +40,27 @@ contract Fixture is Test {
     address public alice = vm.addr(1);
     address public bob = vm.addr(2);
 
-    function getLZChainId(uint256 chainId) internal pure returns (uint16) {
-        if (chainId == 1) return 101;
-        if (chainId == 137) return 109;
-        // TODO COMPLETE
-        return 0;
+    function stringToUint(string memory s) public pure returns (uint) {
+        bytes memory b = bytes(s);
+        uint result = 0;
+        for (uint256 i = 0; i < b.length; i++) {
+            uint256 c = uint256(uint8(b[i]));
+            if (c >= 48 && c <= 57) {
+                result = result * 10 + (c - 48);
+            }
+        }
+        return result;
+    }
+
+    function getLZChainId(uint256 chainId) internal returns (uint16) {
+        string[] memory cmd = new string[](3);
+        cmd[0] = "node";
+        cmd[1] = "utils/getLayerZeroChainIds.js";
+        cmd[2] = vm.toString(chainId);
+
+        bytes memory res = vm.ffi(cmd);
+
+        return uint16(stringToUint(string(res)));
     }
 
     function setUp() public {
@@ -191,13 +208,13 @@ contract Fixture is Test {
         bytes memory payload;
         for (uint256 i; i < entries.length; i++) {
             if (
-                entries[i].topics[0] == keccak256("ExecuteRemoteProposal(uint16,bytes)")
-                // entries[i].topics[1] == bytes32(uint256(137))
+                entries[i].topics[0] == keccak256("ExecuteRemoteProposal(uint16,bytes)") &&
+                entries[i].topics[1] == bytes32(uint256(getLZChainId(137)))
             ) {
                 payload = abi.decode(entries[i].data, (bytes));
                 break;
             }
-        }s
+        }
 
         vm.selectFork(polygonFork);
         hoax(address(polygonLzEndpoint));

@@ -1038,6 +1038,11 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@layerzerolabs/lz-sdk@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@layerzerolabs/lz-sdk/-/lz-sdk-0.0.30.tgz#c86d41d5d535eb6f4d830431db55d5cf37c089ac"
+  integrity sha512-3mjxv5loBfiBtPFa3qthgZBxkgq3ac0t0299gayt1XOkBI0QB9Ti1dKb0qYYs4VavqrKXmJVTDkta+xSdJS0sw==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"

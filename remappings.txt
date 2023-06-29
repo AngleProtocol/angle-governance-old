@@ -6,3 +6,4 @@ oz/=lib/openzeppelin-contracts/contracts/
 mock/=test/mock/
 lz/=lib/solidity-examples/contracts
 @openzeppelin=lib/openzeppelin-contracts/
+stringutils/=lib/solidity-stringutils
