@@ -5,9 +5,13 @@ import "oz/access/Ownable.sol";
 import "oz/security/ReentrancyGuard.sol";
 import "lz/interfaces/ILayerZeroEndpoint.sol";
 
-/// @title Omnichain Governance Proposal Sender
+/// @title ProposalSender
+/// @author LayerZero Labs
 /// @notice Sends a proposal's data to remote chains for execution after the proposal passes on the main chain
-/// @dev When used with GovernorBravo the owner of this contract must be set to the Timelock contract
+/// @dev In Angle setting where there is one Timelock contract per chain to which this proposal sender sends payloads
+/// the owner of this contract must be the `Governor` contract itself
+/// @dev Full fork from:
+/// https://github.com/LayerZero-Labs/omnichain-governance-executor/blob/main/contracts/OmnichainProposalSender.sol
 contract ProposalSender is Ownable, ReentrancyGuard {
     uint64 public lastStoredPayloadNonce;
 
@@ -18,7 +22,8 @@ contract ProposalSender is Ownable, ReentrancyGuard {
     /// @notice LayerZero endpoint for sending messages to remote chains
     ILayerZeroEndpoint public immutable lzEndpoint;
 
-    /// @notice Specifies the allowed path for sending messages (remote chainId => remote app address + local app address)
+    /// @notice Specifies the allowed path for sending messages
+    /// (remote chainId => remote app address + local app address)
     mapping(uint16 => bytes) public trustedRemoteLookup;
 
     /// @notice Emitted when a remote message receiver is set for the remote chain
@@ -46,10 +51,13 @@ contract ProposalSender is Ownable, ReentrancyGuard {
     }
 
     /// @notice Estimates LayerZero fees for cross-chain message delivery to the remote chain
-    /// @dev The estimated fees are the minimum required, it's recommended to increase the fees amount when sending a message. The unused amount will be refunded
+    /// @dev The estimated fees are the minimum required, it's recommended to increase the fees
+    /// amount when sending a message. The unused amount will be refunded
     /// @param remoteChainId The LayerZero id of a remote chain
-    /// @param payload The payload to be sent to the remote chain. It's computed as follows payload = abi.encode(targets, values, signatures, calldatas)
-    /// @param adapterParams The params used to specify the custom amount of gas required for the execution on the destination
+    /// @param payload The payload to be sent to the remote chain. It's computed as follows:
+    /// payload = abi.encode(targets, values, signatures, calldatas)
+    /// @param adapterParams The params used to specify the custom amount of gas required for the execution
+    /// on the destination
     /// @return nativeFee The amount of fee in the native gas token (e.g. ETH)
     /// @return zroFee The amount of fee in ZRO token
     function estimateFees(
@@ -63,8 +71,10 @@ contract ProposalSender is Ownable, ReentrancyGuard {
     /// @notice Sends a message to execute a remote proposal
     /// @dev Stores the hash of the execution parameters if sending fails (e.g., due to insufficient fees)
     /// @param remoteChainId The LayerZero id of the remote chain
-    /// @param payload The payload to be sent to the remote chain. It's computed as follows payload = abi.encode(targets, values, signatures, calldatas)
-    /// @param adapterParams The params used to specify the custom amount of gas required for the execution on the destination
+    /// @param payload The payload to be sent to the remote chain. It's computed as follows:
+    /// payload = abi.encode(targets, values, signatures, calldatas)
+    /// @param adapterParams The params used to specify the custom amount of gas required for the execution
+    /// on the destination
     function execute(
         uint16 remoteChainId,
         bytes calldata payload,
@@ -96,8 +106,10 @@ contract ProposalSender is Ownable, ReentrancyGuard {
     /// @dev Allows to provide more fees if needed. The extra fees will be refunded to the caller
     /// @param nonce The nonce to identify a failed message
     /// @param remoteChainId The LayerZero id of the remote chain
-    /// @param payload The payload to be sent to the remote chain. It's computed as follows payload = abi.encode(targets, values, signatures, calldatas)
-    /// @param adapterParams The params used to specify the custom amount of gas required for the execution on the destination
+    /// @param payload The payload to be sent to the remote chain. It's computed as follows:
+    /// payload = abi.encode(targets, values, signatures, calldatas)
+    /// @param adapterParams The params used to specify the custom amount of gas required for the execution
+    /// on the destination
     /// @param originalValue The msg.value passed when execute() function was called
     function retryExecute(
         uint64 nonce,

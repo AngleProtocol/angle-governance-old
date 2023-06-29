@@ -3,15 +3,21 @@
 pragma solidity ^0.8.9;
 
 import { IGovernor } from "oz/governance/IGovernor.sol";
-import { TimelockController } from "oz/governance/TimelockController.sol";
-
 import { IVotes } from "oz/governance/utils/IVotes.sol";
 
-import { Governor } from "./oz/Governor.sol";
-import { GovernorCountingSimple } from "./oz/GovernorCountingSimple.sol";
-import { GovernorSettings } from "./oz/GovernorSettings.sol";
-import { GovernorVotes } from "./oz/GovernorVotes.sol";
+import { Governor } from "oz/governance/Governor.sol";
+import { GovernorCountingSimple } from "oz/governance/extensions/GovernorCountingSimple.sol";
+import { GovernorSettings } from "oz/governance/extensions/GovernorSettings.sol";
+import { GovernorVotes } from "oz/governance/extensions/GovernorVotes.sol";
+import { TimelockController } from "oz/governance/TimelockController.sol";
 
+import "./utils/Errors.sol";
+
+/// @title AngleGovernor
+/// @author Angle Labs, Inc
+/// @dev Core of Angle governance system, extending various OpenZeppelin modules
+/// @dev This contract overrides some OpenZeppelin function, like those in `GovernorSettings` to introduce
+/// the `onlyExecutor` modifier which ensures that only the Timelock contract can update the system's parameters
 /// @custom:security-contact contact@angle.money
 contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes {
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -27,6 +33,16 @@ contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, Go
 
     TimelockController private _timelock;
     uint256 private _quorum;
+
+    /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                       MODIFIER                                                     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Checks whether the sender is the system's executor
+    modifier onlyExecutor() {
+        if (msg.sender != _executor()) revert NotExecutor();
+        _;
+    }
 
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                       CONSTRUCTOR                                                   
@@ -45,25 +61,39 @@ contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, Go
     }
 
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                                    TIMELOCK LOGIC                                                  
+                                                    VIEW FUNCTIONS                                                  
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Timelock address that owns this contract and can change the system's parameters
+    function timelock() public view returns (address) {
+        return address(_timelock);
+    }
+
+    /// @notice Will not be accurate if the quorum is changed will other proposals are running.
+    function quorum(uint256) public view override returns (uint256) {
+        return _quorum;
+    }
 
     function _executor() internal view override(Governor) returns (address) {
         return address(_timelock);
     }
 
-    function timelock() public view returns (address) {
-        return address(_timelock);
+    /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                        SETTERS                                                     
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
+
+    /// @notice Public endpoint to update the underlying timelock instance. Restricted to the timelock itself,
+    /// so updates must be proposed, scheduled, and executed through governance proposals.
+    /// @dev It is not recommended to change the timelock while there are other queued governance proposals.
+    function updateTimelock(TimelockController newTimelock) external virtual onlyExecutor {
+        _updateTimelock(newTimelock);
     }
 
-    /**
-     * @dev Public endpoint to update the underlying timelock instance. Restricted to the timelock itself, so updates
-     * must be proposed, scheduled, and executed through governance proposals.
-     *
-     * CAUTION: It is not recommended to change the timelock while there are other queued governance proposals.
-     */
-    function updateTimelock(TimelockController newTimelock) external virtual onlyGovernance {
-        _updateTimelock(newTimelock);
+    /// @notice Public endpoint to update the quorum. Restricted to the timelock, so updates must be proposed,
+    /// scheduled, and executed through governance proposals.
+    /// @dev It is not recommended to change the quorum while there are other queued governance proposals.
+    function updateQuorum(uint256 newQuorum) external virtual onlyExecutor {
+        _updateQuorum(newQuorum);
     }
 
     function _updateTimelock(TimelockController newTimelock) private {
@@ -71,40 +101,41 @@ contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, Go
         _timelock = newTimelock;
     }
 
-    /**
-     * @dev Public endpoint to update the quorum. Restricted to the timelock, so updates
-     * must be proposed, scheduled, and executed through governance proposals.
-     *
-     * CAUTION: It is not recommended to change the quorum while there are other queued governance proposals.
-     */
-    function updateQuorum(uint256 newQuorum) external virtual onlyGovernance {
-        _updateQuorum(newQuorum);
-    }
-
     function _updateQuorum(uint256 newQuorum) private {
         emit QuorumChange(_quorum, newQuorum);
         _quorum = newQuorum;
-    }
-
-    /**
-     * @dev Will not be accurate if the quorum is changed will other proposals are running.
-     */
-    function quorum(uint256) public view override returns (uint256) {
-        return _quorum;
     }
 
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                        OVERRIDES                                                    
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 
+    /// @inheritdoc GovernorSettings
+    function setVotingDelay(uint256 newVotingDelay) public override onlyExecutor {
+        _setVotingDelay(newVotingDelay);
+    }
+
+    /// @inheritdoc GovernorSettings
+    function setVotingPeriod(uint256 newVotingPeriod) public override onlyExecutor {
+        _setVotingPeriod(newVotingPeriod);
+    }
+
+    /// @inheritdoc GovernorSettings
+    function setProposalThreshold(uint256 newProposalThreshold) public override onlyExecutor {
+        _setProposalThreshold(newProposalThreshold);
+    }
+
+    /// @inheritdoc GovernorSettings
     function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
         return super.votingDelay();
     }
 
+    /// @inheritdoc GovernorSettings
     function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
         return super.votingPeriod();
     }
 
+    /// @inheritdoc GovernorSettings
     function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.proposalThreshold();
     }
