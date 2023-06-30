@@ -126,17 +126,17 @@ Here are examples of how to run the test suite:
 
 ```bash
 yarn test
-FOUNDRY_PROFILE=dev forge test -vvv --watch # To watch changing files
-FOUNDRY_PROFILE=dev forge test -vvv --match-path test/Test.t.sol
-FOUNDRY_PROFILE=dev forge test -vvv --match-test "testAbc*"
-FOUNDRY_PROFILE=dev forge test -vvv --fork-url <RPC_URL>
+yarn test --watch # To watch changing files
+yarn test --match-path test/Test.t.sol
+yarn test --match-test "testAbc*"
+yarn test --fork-url <RPC_URL>
 ```
 
 You can also list tests:
 
 ```bash
-FOUNDRY_PROFILE=dev forge test --list
-FOUNDRY_PROFILE=dev forge test --list --json --match-test "testXXX*"
+yarn test --list
+yarn test --list --json --match-test "testXXX*"
 ```
 
 ---
