@@ -6,7 +6,6 @@ import { IGovernor } from "oz/governance/IGovernor.sol";
 import { TimelockController } from "oz/governance/TimelockController.sol";
 import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
 import { Strings } from "oz/utils/Strings.sol";
-import { ILayerZeroEndpoint } from "lz/interfaces/ILayerZeroEndpoint.sol";
 
 import { Test, stdError } from "forge-std/Test.sol";
 import { Vm } from "forge-std/Vm.sol";
@@ -15,6 +14,9 @@ import { AngleGovernor } from "contracts/AngleGovernor.sol";
 import { ProposalReceiver } from "contracts/ProposalReceiver.sol";
 import { ProposalSender } from "contracts/ProposalSender.sol";
 
+import { ILayerZeroEndpoint } from "lz/interfaces/ILayerZeroEndpoint.sol";
+
+//solhint-disable
 contract Fixture is Test {
     event ExecuteRemoteProposal(uint16 indexed remoteChainId, bytes payload);
 
