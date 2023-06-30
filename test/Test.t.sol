@@ -8,7 +8,6 @@ import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
 import { Strings } from "oz/utils/Strings.sol";
 import { ILayerZeroEndpoint } from "lz/interfaces/ILayerZeroEndpoint.sol";
 
-import { console } from "forge-std/Console.sol";
 import { Test, stdError } from "forge-std/Test.sol";
 import { Vm } from "forge-std/Vm.sol";
 
