@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.17;
 
 import "oz/security/ReentrancyGuard.sol";
 import "lz/lzApp/NonblockingLzApp.sol";
 
-/// @title Omnichain Governance Executor
-/// @notice Executes the proposal transactions sent from the main chain
-/// @dev The owner of this contract controls LayerZero configuration. When used in production the owner should be set to a Timelock or this contract itself
-/// This implementation is non-blocking meaning the failed messages will not block the future messages from the source. For the blocking behavior derive the contract from LzApp
+/// @title ProposalReceiver
+/// @author LayerZero Labs
+/// @notice Executes proposal transactions sent from the main chain
+/// @dev The owner of this contract controls LayerZero configuration. When used in production the owner
+/// should be set to a Timelock or this contract itself.
+/// @dev This implementation is non-blocking meaning the failed messages will not block the future messages
+/// from the source.
+/// @dev Full fork from:
+/// https://github.com/LayerZero-Labs/omnichain-governance-executor/blob/main/contracts/OmnichainGovernanceExecutor.sol
 contract ProposalReceiver is NonblockingLzApp, ReentrancyGuard {
     using BytesLib for bytes;
     using ExcessivelySafeCall for address;
@@ -35,7 +41,8 @@ contract ProposalReceiver is NonblockingLzApp, ReentrancyGuard {
         // try-catch all errors/exceptions
         if (!success) {
             failedMessages[_srcChainId][_srcAddress][_nonce] = hashedPayload;
-            emit ProposalFailed(_srcChainId, _srcAddress, _nonce, reason); // Retrieve payload from the src side tx if needed to clear
+            // Retrieve payload from the src side tx if needed to clear
+            emit ProposalFailed(_srcChainId, _srcAddress, _nonce, reason);
         }
     }
 

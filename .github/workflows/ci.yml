@@ -1,4 +1,4 @@
-name: Transmuter CI
+name: Angle Governance CI
 
 on:
   push:
@@ -94,11 +94,7 @@ jobs:
           version: nightly
 
       - name: Run Foundry tests
-        run: set -o pipefail && yarn run:ci | tee ethereum.gasreport.ansi
-
-      - name: Compare gas reports
-        uses: Rubilmax/foundry-gas-diff@v3.13.4
-        id: gas_diff
-        with:
-          match: contracts/transmuter/DiamondProxy.sol
-          report: ethereum.gasreport.ansi
+        run: yarn run:ci
+        env:
+          ETH_NODE_URI_1: ${{ secrets.ETH_NODE_URI_1 }}
+          ETH_NODE_URI_137: ${{ secrets.ETH_NODE_URI_137 }}

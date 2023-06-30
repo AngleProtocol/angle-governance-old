@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Thanks for your interest in contributing to the Transmuter system! Transmuter is a community built protocol and anyone is welcome to improve it.
+Thanks for your interest in contributing to the Angle Governance repository! Angle Governance relies on community built mechanisms that anyone is welcome to improve.
 
 If you need to get in contact with the repository maintainers, please reach out in the [#developers channel](https://discord.gg/HcRB8QMeKU) of Angle Discord Server.
 
@@ -14,7 +14,7 @@ There are many ways to contribute, but here are a few if you want a place to sta
 
 ## Opening an Issue
 
-When opening an [issue](https://github.com/AngleProtocol/angle-transmuter/issues/new/choose), please title it with a concise problem statement and check that a similar request is not already open or in progress. Not all issues may be deemed worth resolving, so please follow through with responding to any questions or comments that others may have regarding the issue.
+When opening an [issue](https://github.com/AngleProtocol/angle-governance/issues/new/choose), please title it with a concise problem statement and check that a similar request is not already open or in progress. Not all issues may be deemed worth resolving, so please follow through with responding to any questions or comments that others may have regarding the issue.
 
 ## Opening a Pull Request
 
