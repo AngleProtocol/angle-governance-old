@@ -40,7 +40,13 @@ Precisely speaking, once a vote succeeds (majority of positive votes + quorum), 
 
 ---
 
-## Bug Bounty ⛑️
+## Security ⛑️
+
+## Audits
+
+The [`ProposalReceiver`](contracts/ProposalReceiver.sol) and [`ProposalSender`](contracts/ProposalSender.sol) contracts are forks from LayerZero Labs implementation. Find their audits [here](https://github.com/LayerZero-Labs/omnichain-governance-executor/tree/main/audits).
+
+### Bug Bounty
 
 For contracts deployed for the Angle Protocol, a bug bounty is open on [Immunefi](https://immunefi.com) and [Hats Finance](https://hats.finance). The rewards and scope of the Angle Immunefi are defined [here](https://immunefi.com/bounty/angleprotocol/).
 
