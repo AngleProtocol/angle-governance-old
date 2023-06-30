@@ -52,8 +52,8 @@ contract AngleGovernorTest is Test {
     function test_Initialization() public {
         assertEq(angleGovernor.votingDelay(), 1800);
         assertEq(angleGovernor.votingPeriod(), 36000);
-        assertEq(angleGovernor.proposalThreshold(), 500000e18);
-        assertEq(angleGovernor.quorum(0), 30000000e18);
+        assertEq(angleGovernor.proposalThreshold(), 100000e18);
+        assertEq(angleGovernor.quorum(0), 10000000e18);
         assertEq(angleGovernor.timelock(), address(mainnetTimelock));
     }
 
@@ -91,7 +91,7 @@ contract AngleGovernorTest is Test {
 
     function test_UpdateQuorum() public {
         vm.expectEmit(address(angleGovernor));
-        emit QuorumChange(30000000e18, 10);
+        emit QuorumChange(10000000e18, 10);
         hoax(address(mainnetTimelock));
         angleGovernor.updateQuorum(10);
         assertEq(angleGovernor.quorum(0), 10);
@@ -115,7 +115,7 @@ contract AngleGovernorTest is Test {
 
     function test_SetProposalThreshold() public {
         vm.expectEmit(address(angleGovernor));
-        emit ProposalThresholdSet(500000e18, 13);
+        emit ProposalThresholdSet(100000e18, 13);
         hoax(address(mainnetTimelock));
         angleGovernor.setProposalThreshold(13);
         assertEq(angleGovernor.proposalThreshold(), 13);

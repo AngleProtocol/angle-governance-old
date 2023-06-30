@@ -7,7 +7,7 @@ import { TimelockController } from "oz/governance/TimelockController.sol";
 import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
 import { Strings } from "oz/utils/Strings.sol";
 
-import { console } from "forge-std/Console.sol";
+import { console } from "forge-std/console.sol";
 import { Test, stdError } from "forge-std/Test.sol";
 import { Vm } from "forge-std/Vm.sol";
 

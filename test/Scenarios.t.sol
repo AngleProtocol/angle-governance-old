@@ -7,7 +7,7 @@ import { TimelockController } from "oz/governance/TimelockController.sol";
 import { IVotes } from "oz/governance/extensions/GovernorVotes.sol";
 import { Strings } from "oz/utils/Strings.sol";
 
-import { console } from "forge-std/Console.sol";
+import { console } from "forge-std/console.sol";
 import { Test, stdError } from "forge-std/Test.sol";
 import { Vm } from "forge-std/Vm.sol";
 
@@ -51,7 +51,7 @@ contract Scenarios is SimulationSetup {
         governor().execute(targets, values, calldatas, keccak256(bytes(description)));
         vm.warp(block.timestamp + timelock(1).getMinDelay() + 1);
 
-        assertEq(governor().quorum(0), 30000000e18);
+        assertEq(governor().quorum(0), 10000000e18);
         (targets, values, calldatas) = filterChainSubCalls(1, p);
         timelock(1).execute(targets[0], values[0], calldatas[0], bytes32(0), 0);
         assertEq(governor().quorum(0), 1);

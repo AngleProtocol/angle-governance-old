@@ -53,11 +53,11 @@ contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, Go
         TimelockController timelockAddress
     )
         Governor("AngleGovernor")
-        GovernorSettings(1800 /* 6 hours */, 36000 /* 5 days */, 500000e18)
+        GovernorSettings(1800 /* 6 hours */, 36000 /* 5 days */, 100000e18)
         GovernorVotes(_token)
     {
         _updateTimelock(timelockAddress);
-        _updateQuorum(30000000e18);
+        _updateQuorum(10000000e18);
     }
 
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
