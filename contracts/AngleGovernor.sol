@@ -6,10 +6,11 @@ import { IGovernor } from "oz/governance/IGovernor.sol";
 import { IVotes } from "oz/governance/utils/IVotes.sol";
 
 import { Governor, SafeCast } from "oz/governance/Governor.sol";
-import { GovernorCountingSimple } from "oz/governance/extensions/GovernorCountingSimple.sol";
 import { GovernorSettings } from "oz/governance/extensions/GovernorSettings.sol";
 import { GovernorVotes } from "oz/governance/extensions/GovernorVotes.sol";
 import { TimelockController } from "oz/governance/TimelockController.sol";
+
+import { GovernorCountingFractional } from "./external/GovernorCountingFractional.sol";
 
 import "./utils/Errors.sol";
 
@@ -21,7 +22,7 @@ import "./utils/Errors.sol";
 /// @dev The time parameters (`votingDelay`, `votingPeriod`, ...) are expressed here in block number units which
 ///  means that this implementation is only suited for an Ethereum deployment
 /// @custom:security-contact contact@angle.money
-contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes {
+contract AngleGovernor is Governor, GovernorSettings, GovernorCountingFractional, GovernorVotes {
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                         EVENTS                                                      
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
