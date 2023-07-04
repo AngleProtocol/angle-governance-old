@@ -1,6 +1,6 @@
 # <img src="logo.svg" alt="Governance" height="40px"> Angle Governance
 
-[![Angle Governance CI](https://github.com/AngleProtocol/angle-transmuter/workflows/Angle%20Governance%20CI/badge.svg)](https://github.com/AngleProtocol/angle-governance/actions)
+[![Angle Governance CI](https://github.com/AngleProtocol/angle-governance/workflows/Angle%20Governance%20CI/badge.svg)](https://github.com/AngleProtocol/angle-governance/actions)
 
 ## About this repository 🤔
 
