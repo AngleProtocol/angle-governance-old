@@ -28,7 +28,7 @@
     "url": "https://github.com/AngleProtocol/angle-governance/issues"
   },
   "devDependencies": {
-    "@angleprotocol/sdk": "3.0.43",
+    "@angleprotocol/sdk": "3.0.68",
     "@ethersproject/abi": "^5.7.0",
     "@ethersproject/providers": "^5.7.1",
     "@typechain/ethers-v5": "^10.1.0",
