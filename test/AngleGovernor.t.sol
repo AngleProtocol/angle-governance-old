@@ -120,4 +120,8 @@ contract AngleGovernorTest is Test {
         angleGovernor.setProposalThreshold(13);
         assertEq(angleGovernor.proposalThreshold(), 13);
     }
+
+    function test_Clock() public {
+        assertEq(angleGovernor.clock(), block.number);
+    }
 }
