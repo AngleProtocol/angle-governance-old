@@ -5,7 +5,7 @@ pragma solidity ^0.8.9;
 import { IGovernor } from "oz/governance/IGovernor.sol";
 import { IVotes } from "oz/governance/utils/IVotes.sol";
 
-import { Governor } from "oz/governance/Governor.sol";
+import { Governor, SafeCast } from "oz/governance/Governor.sol";
 import { GovernorCountingSimple } from "oz/governance/extensions/GovernorCountingSimple.sol";
 import { GovernorSettings } from "oz/governance/extensions/GovernorSettings.sol";
 import { GovernorVotes } from "oz/governance/extensions/GovernorVotes.sol";
@@ -18,6 +18,8 @@ import "./utils/Errors.sol";
 /// @dev Core of Angle governance system, extending various OpenZeppelin modules
 /// @dev This contract overrides some OpenZeppelin function, like those in `GovernorSettings` to introduce
 /// the `onlyExecutor` modifier which ensures that only the Timelock contract can update the system's parameters
+/// @dev The time parameters (`votingDelay`, `votingPeriod`, ...) are expressed here in block number units which
+///  means that this implementation is only suited for an Ethereum deployment
 /// @custom:security-contact contact@angle.money
 contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes {
     /*//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -138,5 +140,10 @@ contract AngleGovernor is Governor, GovernorSettings, GovernorCountingSimple, Go
     /// @inheritdoc GovernorSettings
     function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
         return super.proposalThreshold();
+    }
+
+    /// @inheritdoc GovernorVotes
+    function clock() public view override(IGovernor, GovernorVotes) returns (uint48) {
+        return SafeCast.toUint48(block.number);
     }
 }
