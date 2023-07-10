@@ -36,6 +36,8 @@ Precisely speaking, once a vote succeeds (majority of positive votes + quorum), 
   - The payload to execute is sent to a [`ProposalSender`](contracts/ProposalSender.sol) contract on Ethereum which is a simple LayerZero message passing contract owned by the `AngleGovernor` contract.
   - This payload is to be received on the destination chain by a [`ProposalReceiver`](contracts/ProposalReceiver.sol) contract which role is to then send the payload to the Timelock contract of this chain. `Timelock` contracts of non-Ethereum chains only accept payloads from their respective `ProposalReceiver` contract.
 
+It's worth noting that, setup like this, the Angle Governance system can be abstracted among a decision module (`AngleGovernor` contract) and an execution module. Both are modular, and so any could be changed at any time in the future.
+
 ---
 
 ## Documentation 📚
@@ -50,7 +52,8 @@ Precisely speaking, once a vote succeeds (majority of positive votes + quorum), 
 
 ## Audits
 
-The [`ProposalReceiver`](contracts/ProposalReceiver.sol) and [`ProposalSender`](contracts/ProposalSender.sol) contracts are forks from LayerZero Labs implementation. Find their audits [here](https://github.com/LayerZero-Labs/omnichain-governance-executor/tree/main/audits).
+- The `AngleGovernor` implementation relies on several OpenZeppelin extensions as well as on the [audited](http://blog.openzeppelin.com/scopelift-flexible-voting-audit) [`GovernorCountingFractional` extension](https://github.com/ScopeLift/flexible-voting/blob/4399694c1a70d9e236c4c072802bfbe8e4951bf0/src/GovernorCountingFractional.sol) by ScopeLift.
+- The [`ProposalReceiver`](contracts/ProposalReceiver.sol) and [`ProposalSender`](contracts/ProposalSender.sol) contracts are forks from LayerZero Labs implementation. Find their audits [here](https://github.com/LayerZero-Labs/omnichain-governance-executor/tree/main/audits).
 
 ### Bug Bounty
 
