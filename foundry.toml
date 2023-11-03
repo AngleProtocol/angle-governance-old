@@ -20,11 +20,10 @@ runs = 1000
 depth = 30
 
 [rpc_endpoints]
-arbitrum = "${ETH_NODE_URI_ARBITRUM}"
-mainnet = "${ETH_NODE_URI_MAINNET}"
-optimism = "${ETH_NODE_URI_OPTIMISM}"
-polygon = "${ETH_NODE_URI_POLYGON}"
-fork = "${ETH_NODE_URI_FORK}"
+arbitrum = "${PROVIDER_42161}"
+mainnet = "${PROVIDER_1}"
+optimism = "${PROVIDER_10}"
+polygon = "${PROVIDER_137}"
 
 [etherscan]
 arbitrum = { key = "${ARBITRUM_ETHERSCAN_API_KEY}" }

@@ -44,7 +44,7 @@ contract SimulationSetup is Test {
 
         vm.makePersistent(address(proposal));
         vm.makePersistent(address(veANGLE));
-        string memory baseURI = "ETH_NODE_URI_";
+        string memory baseURI = "PROVIDER_";
         for (uint256 i; i < chainIds.length; i++) {
             forkIdentifier[chainIds[i]] = vm.createFork(
                 vm.envString(baseURI.toSlice().concat(vm.toString(chainIds[i]).toSlice()))
